@@ -1,0 +1,20 @@
+{block #menu}
+	<ul class="menu">
+	{foreach $menu as $pageLabel => $pageData}
+		{continueIf !sizeof($pageData)}
+		{if sizeof($pageData) == 1 && $pageData[0]['method'] == ''}
+			<li{ifCurrent this, page => $pageData[0]['page'], method => ''} class="current"{/ifCurrent}><a href="{plink this, page => $pageData[0]['page'], method => ''}">{_$pageLabel}</a></li>
+		{else}
+			{capture $subMenu}
+				<ul>
+				{var $current = ''}
+				{foreach $pageData as $data}
+					<li{ifCurrent this, page => $data['page'], method => $data['method']} class="current"{capture $current}{!$pageLabel}{/capture}{/ifCurrent}><a href="{plink this, page => $data['page'], method => $data['method']}">{_$data['label']}</a></li>
+				{/foreach}
+				</ul>
+			{/capture}
+			<li{if $pageLabel == $current} class="current"{/if}>{_$pageLabel}{!$subMenu}</li>
+		{/if}
+	{/foreach}
+	</ul>
+{/block}

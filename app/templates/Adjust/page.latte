@@ -1,0 +1,10 @@
+{block #content}
+	{control menu}
+	{if $page}
+		{if $method}
+			{control page:$method}
+		{else}
+			{control page}
+		{/if}
+	{/if}
+{/block}

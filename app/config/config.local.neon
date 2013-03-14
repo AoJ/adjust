@@ -1,0 +1,18 @@
+parameters:
+	adjust:
+		test1: \app\components\Test\Test1Control
+		test2: \app\components\Test\Test2Control
+		test3: \app\components\Test\Test3Control
+		test4: \app\components\Test\Test4Control
+		test5: \app\components\Test\Test5Control
+
+nette:
+
+services:
+	authorizator:
+		setup:
+			- addRole('guest')
+			- addResource('test')
+			- allow('guest', 'test', 'view')
+
+factories:
