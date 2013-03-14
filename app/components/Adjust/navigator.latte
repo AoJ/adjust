@@ -1,3 +1,9 @@
+{block #head}
+	<style type="text/css">
+		li.current > span, li.current > a { color: #ff0000; }
+	</style>
+{/block}
+
 {block #menu}
 	<ul class="menu">
 	{foreach $menu as $pageLabel => $pageData}
@@ -13,7 +19,7 @@
 				{/foreach}
 				</ul>
 			{/capture}
-			<li{if $pageLabel == $current} class="current"{/if}>{_$pageLabel}{!$subMenu}</li>
+			<li{if $pageLabel == $current} class="current"{/if}><span>{_$pageLabel}</span>{!$subMenu}</li>
 		{/if}
 	{/foreach}
 	</ul>
