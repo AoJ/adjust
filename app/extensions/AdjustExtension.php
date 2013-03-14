@@ -12,15 +12,15 @@ class AdjustExtension extends CompilerExtension
 	
 	public function loadConfiguration()
 	{
-		$container = $this->getContainerBuilder();
+		$serviceName = $this->prefix(self::PREFIX . 'Manager');
 		
-		$container->addDefinition($this->prefix('adjustManager'))
+		$this->getContainerBuilder()->addDefinition($serviceName)
 				->setClass('\app\services\AdjustManager', array(
 					'@user',
 					'@router',
 					'@cacheStorage',
 					'%' . self::PREFIX . '%',
-					$this->prefix('adjustManager')
+					$serviceName
 				))
 				->addSetup('readAdjustData')
 				->addSetup('createRoutes')
