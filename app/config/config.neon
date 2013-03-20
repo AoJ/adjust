@@ -6,7 +6,6 @@
 #
 common:
 	parameters:
-		adjust: []
 
 	php:
 		date.timezone: Europe/Prague
@@ -30,11 +29,11 @@ common:
 		routerFactory: RouterFactory
 		router: @routerFactory::createRouter
 		authorizator:
-			class: \Nette\Security\Permission				
+			class: Nette\Security\Permission				
 		user:
 			setup:
 				- setAuthorizator(@authorizator)
-		translator: \app\services\Translator
+		translator: app\services\Translator
 
 	factories:
 

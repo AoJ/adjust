@@ -11,10 +11,10 @@ use Nette\Application\UI,
 
 class AdjustNavigatorControl extends UI\Control
 {
-	/** @var \app\services\Adjust\AdjustManager */
+	/** @var app\services\Adjust\AdjustManager */
 	public $adjustManager;
 	
-	/** @var \app\services\Translator */
+	/** @var app\services\Translator */
 	public $translator;
 	
 	public function __construct(AdjustManager $adjustManager, Translator $translator, IContainer $parent = NULL, $name = NULL)

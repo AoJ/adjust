@@ -8,35 +8,36 @@ use Nette,
 	Nette\Application\Routers\Route,
 	Nette\InvalidArgumentException,
 	Nette\Security\User,
-	Nette\Caching;
+	Nette\Caching,
+	ReflectionMethod;
 
 
 
 class AdjustManager extends Nette\Object
 {
-	/** @var \Nette\Application\IRouter */
+	/** @var Nette\Application\IRouter */
 	public $router;
 	
-	/** @var \Nette\Security\User */
+	/** @var Nette\Security\User */
 	public $user;
 	
-	/** @var \Nette\Caching\IStorage */
+	/** @var Nette\Caching\IStorage */
 	public $storage;
 	
 	/** @var array */
 	public $config;
 	
-	/** @var array */
-	public $adjustData;
-	
 	/** @var string */
 	public $name;
+	
+	/** @var array */
+	public $adjustData;
 	
 	/**
 	 * @param User $user
 	 * @param IRouter $router
 	 * @param Caching\IStorage $storage
-	 * @param array $config
+	 * @param mixed $config
 	 * @param string $name 
 	 */
 	public function __construct(User $user, IRouter $router, Caching\IStorage $storage, array $config, $name)
@@ -103,22 +104,12 @@ class AdjustManager extends Nette\Object
 			if (!$cRef->implementsInterface('Nette\Application\UI\IRenderable')) {
 				throw new InvalidArgumentException("Component '$class' must be instance of IRenderable.");
 			}
-			
-			$pageFile = $cRef->getFileName();
 
-			$pageLabel = $cRef->hasAnnotation('label') ? $cRef->getAnnotation('label') : '';
-			if (empty($pageLabel)) {
-				$pageLabel = $page;
-			}
-
-			$pageResources = $cRef->hasAnnotation('resource') ? explode(' ', $cRef->getAnnotation('resource')) : array();
-			$pagePrivileges = $cRef->hasAnnotation('privilege') ? explode(' ', $cRef->getAnnotation('privilege')) : array();
+			$pageResources = array_filter(explode(' ', $cRef->getAnnotation('resource')));
+			$pagePrivileges = array_filter(explode(' ', $cRef->getAnnotation('privilege')));
 
 			$pageMethods = array('render' => array(), 'handle' => array());
-			foreach ($cRef->getMethods() as $mRef) {
-				if (!$mRef->isPublic() || $mRef->isAbstract() || $mRef->isStatic()) {
-					continue;
-				}
+			foreach ($cRef->getMethods(ReflectionMethod::IS_PUBLIC & ~ReflectionMethod::IS_ABSTRACT & ~ReflectionMethod::IS_STATIC) as $mRef) {
 				$methodName = $mRef->getName();
 				$methodType = substr($methodName, 0, 6);
 				if ($methodType !== 'render' && $methodType !== 'handle') {
@@ -127,29 +118,19 @@ class AdjustManager extends Nette\Object
 				if (!$mRef->hasAnnotation('adjust')) {
 					continue;
 				}
-
+				
 				$method = strtolower(substr($methodName, 6));
-				$methodLabel = $mRef->hasAnnotation('label') ? $mRef->getAnnotation('label') : '';
-				if (empty($methodLabel)) {
-					$methodLabel = empty($method) ? 'default' : $method;
-				}
-
-				$methodResources = $mRef->hasAnnotation('resource') ? explode(' ', $mRef->getAnnotation('resource')) : array();
-				$methodResources = array_unique(array_merge($methodResources, $pageResources));
-				$methodPrivileges = $mRef->hasAnnotation('privilege') ? explode(' ', $mRef->getAnnotation('privilege')) : array();
-				$methodPrivileges = array_unique(array_merge($methodPrivileges, $pagePrivileges));
-
 				$pageMethods[$methodType][$method] = array(
-					'label' => $methodLabel,
-					'resources' => $methodResources,
-					'privileges' => $methodPrivileges
+					'label' => $mRef->getAnnotation('label') ?: ($method ?: 'default'),
+					'resources' => array_unique(array_merge(array_filter(explode(' ', $mRef->getAnnotation('resource'))), $pageResources)),
+					'privileges' => array_unique(array_merge(array_filter(explode(' ', $mRef->getAnnotation('privilege'))), $pagePrivileges))
 				);
 			}
 
 			$adjustData[$page] = array(
 				'class' => $class,
-				'file' => $pageFile,
-				'label' => $pageLabel,
+				'file' => $cRef->getFileName(),
+				'label' => $cRef->getAnnotation('label') ?: $page,
 				'methods' => $pageMethods
 			);
 		}

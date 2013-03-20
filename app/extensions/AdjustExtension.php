@@ -15,7 +15,7 @@ class AdjustExtension extends CompilerExtension
 		$serviceName = $this->prefix(self::PREFIX . 'Manager');
 		
 		$this->getContainerBuilder()->addDefinition($serviceName)
-				->setClass('\app\services\AdjustManager', array(
+				->setClass('app\services\AdjustManager', array(
 					'@user',
 					'@router',
 					'@cacheStorage',

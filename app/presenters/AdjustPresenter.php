@@ -1,6 +1,6 @@
 <?php
 
-use app\components\Adjust\AdjustNavigatorControl,
+use app\components\Adjust,
 	app\services\AdjustManager,
 	app\services\Translator,
 	Nette\Application;
@@ -15,10 +15,10 @@ class AdjustPresenter extends BasePresenter
 	/** @var string @persistent */
 	public $method;
 	
-	/** @var \app\services\AdjustManager */
+	/** @var app\services\AdjustManager @inject */
 	public $adjustManager;
 	
-	/** @var \app\services\Translator */
+	/** @var app\services\Translator @inject */
 	public $translator;
 	
 	protected function startup()
@@ -44,7 +44,7 @@ class AdjustPresenter extends BasePresenter
 	
 	public function createComponentMenu($name)
 	{
-		return new AdjustNavigatorControl($this->adjustManager, $this->translator, $this, $name);
+		return new Adjust\AdjustNavigatorControl($this->adjustManager, $this->translator, $this, $name);
 	}
 	
 	public function createComponentPage($name)
@@ -53,11 +53,17 @@ class AdjustPresenter extends BasePresenter
 		return $page ? new $page['class']($this, $name) : NULL;
 	}
 	
+	/**
+	 * @param app\services\AdjustManager $adjustManager 
+	 */
 	public function injectAdjustManager(AdjustManager $adjustManager)
 	{
 		$this->adjustManager = $adjustManager;
 	}
 	
+	/**
+	 * @param app\services\Translator $translator
+	 */
 	public function injectTranslator(Translator $translator)
 	{
 		$this->translator = $translator;

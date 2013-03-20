@@ -22,8 +22,8 @@ $configurator->addConfig(__DIR__ . '/config/config.neon');
 $configurator->addConfig(__DIR__ . '/config/config.local.neon', $configurator::NONE); // none section
 
 //Adjust
-$configurator->onCompile[] = function($configurator, \Nette\Config\Compiler $compiler) {
-	$adjustExtension = new \app\extensions\AdjustExtension;
+$configurator->onCompile[] = function($configurator, Nette\Config\Compiler $compiler) {
+	$adjustExtension = new app\extensions\AdjustExtension;
     $compiler->addExtension($adjustExtension::PREFIX, $adjustExtension);
 };
 
