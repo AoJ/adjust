@@ -32,6 +32,8 @@ class AdjustManager extends Nette\Object
 	
 	/** @var array */
 	public $adjustData;
+
+	
 	
 	/**
 	 * @param User $user
@@ -50,10 +52,14 @@ class AdjustManager extends Nette\Object
 		$this->adjustData = array();
 	}
 	
+	
+	
 	public function createRoutes()
 	{
 		$this->router[] = new Route('adjust/<page>[/<method>]', 'Adjust:page');
 	}
+	
+	
 	
 	/**
 	 * @param string $page
@@ -63,6 +69,8 @@ class AdjustManager extends Nette\Object
 	{
 		return isset($this->adjustData[$page]) ? $this->adjustData[$page] : NULL;
 	}
+	
+	
 	
 	public function readAdjustData()
 	{
@@ -74,6 +82,8 @@ class AdjustManager extends Nette\Object
 			));
 		}
 	}
+	
+	
 	
 	/**
 	 * @param array $config
@@ -87,6 +97,8 @@ class AdjustManager extends Nette\Object
 		}
 		return $files;
 	}
+	
+	
 	
 	/**
 	 * @param array $config
@@ -136,7 +148,9 @@ class AdjustManager extends Nette\Object
 		}
 		return $adjustData;
 	}
-		
+	
+	
+	
 	/**
 	 * @param string $page
 	 * @param string $method
@@ -147,6 +161,8 @@ class AdjustManager extends Nette\Object
 		return $this->isAllowed($page, 'render', $method);
 	}
 	
+	
+	
 	/**
 	 * @param string $page
 	 * @param string $signal
@@ -156,6 +172,8 @@ class AdjustManager extends Nette\Object
 	{
 		return $this->isAllowed($page, 'handle', $signal);
 	}
+	
+	
 	
 	/**
 	 * @param string $page

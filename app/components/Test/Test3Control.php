@@ -22,6 +22,8 @@ class Test3Control extends UI\Control
 		$this->template->setFile(__DIR__ . '/test.latte');
 		$this->template->render();
 	}
+
+	
 	
 	/**
 	 * @adjust Nemá label, definuje si vlastní práva

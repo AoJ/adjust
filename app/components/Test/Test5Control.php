@@ -17,6 +17,7 @@ class Test5Control extends UI\Control
 	
 	/**
 	 * @adjust
+	 * @label Komponenta 5
 	 */
 	public function render()
 	{

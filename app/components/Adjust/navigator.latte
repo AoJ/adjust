@@ -1,26 +1,15 @@
-{block #head}
-	<style type="text/css">
-		li.current > span, li.current > a { color: #00aa00; }
-	</style>
-{/block}
-
 {block #menu}
-	<ul class="menu">
+<div class="well span4">
+	<ul class="nav nav-list">
 	{foreach $menu as $pageLabel => $pageData}
 		{continueIf !sizeof($pageData)}
 		{if sizeof($pageData) == 1 && $pageData[0]['method'] == ''}
-			<li{ifCurrent this, page => $pageData[0]['page'], method => ''} class="current"{/ifCurrent}><a href="{plink this, page => $pageData[0]['page'], method => ''}">{_$pageLabel}</a></li>
+			<li{ifCurrent this, page => $pageData[0]['page'], method => ''} class="active"{/ifCurrent}><a href="{plink this, page => $pageData[0]['page'], method => ''}">{_$pageLabel}</a></li>
 		{else}
-			{capture $subMenu}
-				<ul>
-				{var $current = ''}
-				{foreach $pageData as $data}
-					<li{ifCurrent this, page => $data['page'], method => $data['method']} class="current"{capture $current}{!$pageLabel}{/capture}{/ifCurrent}><a href="{plink this, page => $data['page'], method => $data['method']}">{_$data['label']}</a></li>
-				{/foreach}
-				</ul>
-			{/capture}
-			<li{if $pageLabel == $current} class="current"{/if}><span>{_$pageLabel}</span>{!$subMenu}</li>
+			<li class="nav-header">{_$pageLabel}</li>
+			<li n:foreach="$pageData as $data"{ifCurrent this, page => $data['page'], method => $data['method']} class="active"{/ifCurrent}><a href="{plink this, page => $data['page'], method => $data['method']}">{_$data['label']}</a></li>
 		{/if}
 	{/foreach}
 	</ul>
+</div>
 {/block}

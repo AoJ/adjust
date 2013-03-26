@@ -9,6 +9,8 @@ use Nette\Config\CompilerExtension;
 class AdjustExtension extends CompilerExtension
 {
 	const PREFIX = 'adjust';
+
+	
 	
 	public function loadConfiguration()
 	{

@@ -17,6 +17,7 @@ class Test4Control extends UI\Control
 	
 	/**
 	 * @adjust
+	 * @label Komponenta 4
 	 */
 	public function render()
 	{

@@ -8,6 +8,7 @@ use Nette\Localization;
 
 class Translator implements Localization\ITranslator
 {
+	
 	/**
 	 * @param string $message
 	 * @param int $count

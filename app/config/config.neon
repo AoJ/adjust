@@ -29,7 +29,7 @@ common:
 		routerFactory: RouterFactory
 		router: @routerFactory::createRouter
 		authorizator:
-			class: Nette\Security\Permission				
+			class: Nette\Security\Permission
 		user:
 			setup:
 				- setAuthorizator(@authorizator)

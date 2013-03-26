@@ -20,7 +20,12 @@ class AdjustPresenter extends BasePresenter
 	
 	/** @var app\services\Translator @inject */
 	public $translator;
+
 	
+	
+	/**
+	 * @return void
+	 */
 	protected function startup()
 	{
 		parent::startup();
@@ -36,22 +41,30 @@ class AdjustPresenter extends BasePresenter
 		}
 	}
 	
+	
+	
 	public function renderPage()
 	{
 		$this->template->page = $this->page;
 		$this->template->method = $this->method;
 	}
 	
+	
+	
 	public function createComponentMenu($name)
 	{
 		return new Adjust\AdjustNavigatorControl($this->adjustManager, $this->translator, $this, $name);
 	}
+	
+	
 	
 	public function createComponentPage($name)
 	{
 		$page = $this->adjustManager->getPage($this->page);
 		return $page ? new $page['class']($this, $name) : NULL;
 	}
+	
+	
 	
 	/**
 	 * @param app\services\AdjustManager $adjustManager 
@@ -60,6 +73,8 @@ class AdjustPresenter extends BasePresenter
 	{
 		$this->adjustManager = $adjustManager;
 	}
+	
+	
 	
 	/**
 	 * @param app\services\Translator $translator
