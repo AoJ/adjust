@@ -15,6 +15,10 @@ use Nette,
 
 class AdjustManager extends Nette\Object
 {
+	const VIEW_PREFIX = 'render',
+			SIGNAL_PREFIX = 'handle';
+	
+	
 	/** @var Nette\Application\IRouter */
 	public $router;
 	
@@ -120,11 +124,11 @@ class AdjustManager extends Nette\Object
 			$pageResources = array_filter(explode(' ', $cRef->getAnnotation('resource')));
 			$pagePrivileges = array_filter(explode(' ', $cRef->getAnnotation('privilege')));
 
-			$pageMethods = array('render' => array(), 'handle' => array());
+			$pageMethods = array(self::VIEW_PREFIX => array(), self::SIGNAL_PREFIX => array());
 			foreach ($cRef->getMethods(ReflectionMethod::IS_PUBLIC & ~ReflectionMethod::IS_ABSTRACT & ~ReflectionMethod::IS_STATIC) as $mRef) {
 				$methodName = $mRef->getName();
 				$methodType = substr($methodName, 0, 6);
-				if ($methodType !== 'render' && $methodType !== 'handle') {
+				if ($methodType !== self::VIEW_PREFIX && $methodType !== self::SIGNAL_PREFIX) {
 					continue;
 				}
 				if (!$mRef->hasAnnotation('adjust')) {
@@ -158,7 +162,7 @@ class AdjustManager extends Nette\Object
 	 */
 	public function isViewAllowed($page, $method)
 	{
-		return $this->isAllowed($page, 'render', $method);
+		return $this->isAllowed($page, self::VIEW_PREFIX, $method);
 	}
 	
 	
@@ -170,7 +174,7 @@ class AdjustManager extends Nette\Object
 	 */
 	public function isSignalAllowed($page, $signal)
 	{
-		return $this->isAllowed($page, 'handle', $signal);
+		return $this->isAllowed($page, self::SIGNAL_PREFIX, $signal);
 	}
 	
 	
