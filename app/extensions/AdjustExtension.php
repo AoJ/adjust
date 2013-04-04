@@ -21,7 +21,7 @@ class AdjustExtension extends CompilerExtension
 					'@user',
 					'@router',
 					'@cacheStorage',
-					'%' . self::PREFIX . '%',
+					$this->getConfig(array()),
 					$serviceName
 				))
 				->addSetup('readAdjustData')
