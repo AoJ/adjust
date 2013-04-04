@@ -121,11 +121,17 @@ class AdjustManager extends Nette\Object
 				throw new InvalidArgumentException("Component '$class' must be instance of IRenderable.");
 			}
 
-			$pageResources = array_filter(explode(' ', $cRef->getAnnotation('resource')));
-			$pagePrivileges = array_filter(explode(' ', $cRef->getAnnotation('privilege')));
+			$pageResources = $this->annotationToArray($cRef->getAnnotation('resource'));
+			$pagePrivileges = $this->annotationToArray($cRef->getAnnotation('privilege'));
 
-			$pageMethods = array(self::VIEW_PREFIX => array(), self::SIGNAL_PREFIX => array());
-			foreach ($cRef->getMethods(ReflectionMethod::IS_PUBLIC & ~ReflectionMethod::IS_ABSTRACT & ~ReflectionMethod::IS_STATIC) as $mRef) {
+			$pageMethods = array(
+				self::VIEW_PREFIX => array(),
+				self::SIGNAL_PREFIX => array()
+			);
+			
+			foreach ($cRef->getMethods(ReflectionMethod::IS_PUBLIC
+					& ~ReflectionMethod::IS_ABSTRACT
+					& ~ReflectionMethod::IS_STATIC) as $mRef) {
 				$methodName = $mRef->getName();
 				$methodType = substr($methodName, 0, 6);
 				if ($methodType !== self::VIEW_PREFIX && $methodType !== self::SIGNAL_PREFIX) {
@@ -138,8 +144,12 @@ class AdjustManager extends Nette\Object
 				$method = strtolower(substr($methodName, 6));
 				$pageMethods[$methodType][$method] = array(
 					'label' => $mRef->getAnnotation('label') ?: ($method ?: 'default'),
-					'resources' => array_unique(array_merge(array_filter(explode(' ', $mRef->getAnnotation('resource'))), $pageResources)),
-					'privileges' => array_unique(array_merge(array_filter(explode(' ', $mRef->getAnnotation('privilege'))), $pagePrivileges))
+					'resources' => array_unique(array_merge(
+							$this->annotationToArray($mRef->getAnnotation('resource')),
+							$pageResources)),
+					'privileges' => array_unique(array_merge(
+							$this->annotationToArray($mRef->getAnnotation('privilege')),
+							$pagePrivileges))
 				);
 			}
 
@@ -198,5 +208,14 @@ class AdjustManager extends Nette\Object
 		}
 		return FALSE;
 	}
+
 	
+	
+	/**
+	 * @param string $annotation 
+	 * @return array
+	 */
+	protected function annotationToArray($annotation) {
+		return array_filter(explode(' ', $annotation));
+	}
 }
