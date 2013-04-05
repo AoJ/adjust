@@ -113,50 +113,50 @@ class AdjustManager extends Nette\Object
 	{
 		$adjustData = array();
 		foreach ($config as $page => $class) {
-			$cRef = new Reflection\ClassType($class);
-			if (!$cRef->hasAnnotation('adjust')) {
+			$classRef = new Reflection\ClassType($class);
+			if (!$classRef->hasAnnotation('adjust')) {
 				continue;
 			}
-			if (!$cRef->implementsInterface('Nette\Application\UI\IRenderable')) {
+			if (!$classRef->implementsInterface('Nette\Application\UI\IRenderable')) {
 				throw new InvalidArgumentException("Component '$class' must be instance of IRenderable.");
 			}
 
-			$pageResources = $this->annotationToArray($cRef->getAnnotation('resource'));
-			$pagePrivileges = $this->annotationToArray($cRef->getAnnotation('privilege'));
+			$pageResources = $this->annotationToArray($classRef->getAnnotation('resource'));
+			$pagePrivileges = $this->annotationToArray($classRef->getAnnotation('privilege'));
 
 			$pageMethods = array(
 				self::VIEW_PREFIX => array(),
 				self::SIGNAL_PREFIX => array()
 			);
 			
-			foreach ($cRef->getMethods(ReflectionMethod::IS_PUBLIC
+			foreach ($classRef->getMethods(ReflectionMethod::IS_PUBLIC
 					& ~ReflectionMethod::IS_ABSTRACT
-					& ~ReflectionMethod::IS_STATIC) as $mRef) {
-				$methodName = $mRef->getName();
+					& ~ReflectionMethod::IS_STATIC) as $methodRef) {
+				$methodName = $methodRef->getName();
 				$methodType = substr($methodName, 0, 6);
 				if ($methodType !== self::VIEW_PREFIX && $methodType !== self::SIGNAL_PREFIX) {
 					continue;
 				}
-				if (!$mRef->hasAnnotation('adjust')) {
+				if (!$methodRef->hasAnnotation('adjust')) {
 					continue;
 				}
 				
 				$method = strtolower(substr($methodName, 6));
 				$pageMethods[$methodType][$method] = array(
-					'label' => $mRef->getAnnotation('label') ?: ($method ?: 'default'),
+					'label' => $methodRef->getAnnotation('label') ?: ($method ?: 'default'),
 					'resources' => array_unique(array_merge(
-							$this->annotationToArray($mRef->getAnnotation('resource')),
+							$this->annotationToArray($methodRef->getAnnotation('resource')),
 							$pageResources)),
 					'privileges' => array_unique(array_merge(
-							$this->annotationToArray($mRef->getAnnotation('privilege')),
+							$this->annotationToArray($methodRef->getAnnotation('privilege')),
 							$pagePrivileges))
 				);
 			}
 
 			$adjustData[$page] = array(
 				'class' => $class,
-				'file' => $cRef->getFileName(),
-				'label' => $cRef->getAnnotation('label') ?: $page,
+				'file' => $classRef->getFileName(),
+				'label' => $classRef->getAnnotation('label') ?: $page,
 				'methods' => $pageMethods
 			);
 		}
@@ -215,7 +215,8 @@ class AdjustManager extends Nette\Object
 	 * @param string $annotation 
 	 * @return array
 	 */
-	protected function annotationToArray($annotation) {
-		return array_filter(explode(' ', $annotation));
+	protected function annotationToArray($annotation)
+	{
+		return array_filter(preg_split('/\s+/', $annotation));
 	}
 }
